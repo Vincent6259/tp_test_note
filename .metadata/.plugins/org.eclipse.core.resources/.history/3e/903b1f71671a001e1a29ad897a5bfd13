@@ -1,0 +1,44 @@
+package Exo1;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class PaymentIntegrationTest {
+    private PaymentProcessor paymentProcessor;
+    private CreditCardManager creditCardManager;
+    private PaymentGateway paymentGateway;
+
+    @BeforeEach
+    public void setup() {
+        paymentProcessor = new PaymentProcessor();
+        creditCardManager = new CreditCardManager();
+        paymentGateway = new PaymentGateway();
+    }
+
+    @Test
+    public void paymentIsSuccessful() {
+        String validCardNumber = "1234567812345678";
+        String validCvv = "123";
+
+        assertTrue(creditCardManager.verifyCard(validCardNumber, validCvv));
+
+        boolean isProcessed = paymentProcessor.processPayment(100.0, validCardNumber, validCvv);
+        assertTrue(isProcessed);
+
+        String transactionId = paymentGateway.makePayment(100.0);
+        assertNotNull(transactionId);
+    }
+
+    @Test
+    public void creditCardVerificationFails() {
+        String invalidCardNumber = "123";
+        String invalidCvv = "12";
+
+        assertFalse(creditCardManager.verifyCard(invalidCardNumber, invalidCvv));
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            paymentProcessor.processPayment(100.0, invalidCardNumber, invalidCvv);
+        });
+    }
+}

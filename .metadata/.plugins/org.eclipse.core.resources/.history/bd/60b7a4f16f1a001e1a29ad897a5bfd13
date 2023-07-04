@@ -1,0 +1,101 @@
+package Exo2;
+import java.time.LocalDateTime;
+import java.util.*;
+
+public class sd {
+    // Simule une base de données de patients et de médecins avec des HashMaps.
+    private Map<Integer, String> patients = new HashMap<>();
+    private Map<Integer, String> doctors = new HashMap<>();
+
+    // Utilise une HashMap pour stocker les réservations. La clé est un couple de médecin et de patient,
+    // et la valeur est la liste des heures de rendez-vous pour ce couple.
+    private Map<Pair<Integer, Integer>, List<LocalDateTime>> reservations = new HashMap<>();
+
+    public sd() {
+        // Initialise des données de test.
+
+        // Ajoute 3 médecins.
+        doctors.put(1, "Dr. Smith");
+        doctors.put(2, "Dr. Johnson");
+        doctors.put(3, "Dr. Williams");
+
+        // Ajoute 6 patients.
+        patients.put(1, "Patient A");
+        patients.put(2, "Patient B");
+        patients.put(3, "Patient C");
+        patients.put(4, "Patient D");
+        patients.put(5, "Patient E");
+        patients.put(6, "Patient F");
+
+        // Ajoute un rendez-vous pour le Dr. Smith et le Patient A à une date ultérieure.
+        Pair<Integer, Integer> pair = new Pair<>(1, 1);
+        reservations.put(pair, new ArrayList<>());
+        reservations.get(pair).add(LocalDateTime.now().plusDays(1));
+    }
+
+    public boolean makeReservation(int patientId, int doctorId, LocalDateTime dateTime) {
+        // Vérifie si le patient et le médecin sont valides.
+        if (!patients.containsKey(patientId) || !doctors.containsKey(doctorId)) {
+            return false;
+        }
+
+        // Vérifie si le médecin est disponible à la date et l'heure demandées.
+        Pair<Integer, Integer> pair = new Pair<>(doctorId, patientId);
+        if (reservations.containsKey(pair) && reservations.get(pair).contains(dateTime)) {
+            return false;  // Le médecin n'est pas disponible.
+        }
+
+        // Ajoute la réservation.
+        if (!reservations.containsKey(pair)) {
+            reservations.put(pair, new ArrayList<>());
+        }
+        reservations.get(pair).add(dateTime);
+
+        return true;  // La réservation a été ajoutée avec succès.
+    }
+
+    // Cette classe est utilisée pour stocker les couples de médecin et de patient.
+    private static class Pair<K, V> {
+        private K key;
+        private V value;
+
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        // getters, setters, hashCode, equals...
+    }
+    
+    public boolean makeReservation(int patientId, int doctorId, LocalDateTime dateTime) {
+        // ...
+
+        // Vérifie que le médecin n'a pas plus de 4 rendez-vous le même jour.
+        if (appointmentsForDay(doctorId, dateTime.toLocalDate()) >= 4) {
+            return false;  // Le médecin a déjà 4 rendez-vous ce jour-là.
+        }
+
+        // Ajoute la réservation.
+        if (!reservations.containsKey(pair)) {
+            reservations.put(pair, new ArrayList<>());
+        }
+        reservations.get(pair).add(dateTime);
+
+        return true;  // La réservation a été ajoutée avec succès.
+    }
+
+    // Cette méthode compte le nombre de rendez-vous pour un médecin à une date donnée.
+    private int appointmentsForDay(int doctorId, LocalDate date) {
+        int count = 0;
+        for (Map.Entry<Pair<Integer, Integer>, List<LocalDateTime>> entry : reservations.entrySet()) {
+            if (entry.getKey().key.equals(doctorId)) {
+                for (LocalDateTime appointment : entry.getValue()) {
+                    if (appointment.toLocalDate().equals(date)) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+}

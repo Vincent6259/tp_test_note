@@ -1,0 +1,6 @@
+public class PaymentGateway {
+    public String makePayment(double amount) {
+        // Faites un appel à un fournisseur de services de paiement tiers ici (omis pour la simplicité)
+        return "transactionId"; // suppose que le paiement a réussi et renvoie un identifiant de transaction
+    }
+}

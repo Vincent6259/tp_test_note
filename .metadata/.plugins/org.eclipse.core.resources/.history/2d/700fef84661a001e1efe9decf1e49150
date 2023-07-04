@@ -1,0 +1,51 @@
+package Exo1;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class PaymentIntegrationTest {
+    private PaymentProcessor paymentProcessor;
+    private CreditCardManager creditCardManager;
+    private PaymentGateway paymentGateway;
+
+    @BeforeEach
+    public void setup() {
+        paymentProcessor = new PaymentProcessor();
+        creditCardManager = new CreditCardManager();
+        paymentGateway = new PaymentGateway();
+    }
+
+    @Test
+    public void paymentIsSuccessful() {
+        // Préparez des informations de carte de crédit valides
+        String validCardNumber = "1234567812345678";
+        String validCvv = "123";
+
+        // Vérifiez que la carte est valide
+        assertTrue(creditCardManager.verifyCard(validCardNumber, validCvv));
+
+        // Traitez le paiement
+        boolean isProcessed = paymentProcessor.processPayment(100.0, validCardNumber, validCvv);
+        assertTrue(isProcessed);
+
+        // Effectuez le paiement via le passerelle de paiement
+        String transactionId = paymentGateway.makePayment(100.0);
+        assertNotNull(transactionId);
+    }
+
+    @Test
+    public void creditCardVerificationFails() {
+        // Préparez des informations de carte de crédit invalides
+        String invalidCardNumber = "123";
+        String invalidCvv = "12";
+
+        // Vérifiez que la carte est invalide
+        assertFalse(creditCardManager.verifyCard(invalidCardNumber, invalidCvv));
+
+        // Essayer de traiter le paiement devrait échouer
+        assertThrows(IllegalArgumentException.class, () -> {
+            paymentProcessor.processPayment(100.0, invalidCardNumber, invalidCvv);
+        });
+    }
+}

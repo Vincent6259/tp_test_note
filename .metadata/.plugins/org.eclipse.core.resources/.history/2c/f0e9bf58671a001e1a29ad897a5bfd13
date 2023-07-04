@@ -1,0 +1,12 @@
+package Exo1;
+
+public class PaymentProcessor {
+    public boolean processPayment(double amount, String cardNumber, String cvv) {
+        if(cardNumber.length() != 16 || cvv.length() != 3) {
+            throw new IllegalArgumentException("Invalid card number or CVV");
+        }
+
+        // Traitement du paiement...
+        return true; // suppose que le paiement a réussi
+    }
+}

@@ -1,0 +1,76 @@
+package Exo2;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+
+public class ReservationSystem {
+    private Map<Integer, String> patients = new HashMap<>();
+    private Map<Integer, String> doctors = new HashMap<>();
+    private Map<Pair<Integer, LocalDate>, List<LocalTime>> doctorAppointments = new HashMap<>();
+
+    public ReservationSystem() {
+        doctors.put(1, "Dr. docteur");
+        doctors.put(2, "Dr. Sourcetkt");
+        doctors.put(3, "Dr. Jailaflemme");
+
+        patients.put(1, "Patient Jaifaim");
+        patients.put(2, "Patient Bisousmagique");
+        patients.put(3, "Patient Simuleur");
+
+        for (int doctorId : doctors.keySet()) {
+            doctorAppointments.put(new Pair<>(doctorId, LocalDate.now()), new ArrayList<>());
+        }
+    }
+
+    public boolean makeReservation(int patientId, int doctorId, LocalDateTime dateTime) {
+        if (!patients.containsKey(patientId) || !doctors.containsKey(doctorId)) {
+            return false;
+        }
+
+        LocalDate appointmentDate = dateTime.toLocalDate();
+        LocalTime appointmentTime = dateTime.toLocalTime();
+
+        Pair<Integer, LocalDate> doctorAppointmentKey = new Pair<>(doctorId, appointmentDate);
+        List<LocalTime> doctorAppointmentsForDate = doctorAppointments.get(doctorAppointmentKey);
+        if (doctorAppointmentsForDate != null && doctorAppointmentsForDate.size() >= 4) {
+            return false;
+        }
+
+        for (Map.Entry<Pair<Integer, LocalDate>, List<LocalTime>> entry : doctorAppointments.entrySet()) {
+            Pair<Integer, LocalDate> key = entry.getKey();
+            if (key.first == doctorId && key.second.isEqual(appointmentDate)) {
+                List<LocalTime> appointments = entry.getValue();
+                if (appointments.contains(appointmentTime)) {
+                    return false;
+                }
+            }
+        }
+
+        if (!doctorAppointments.containsKey(doctorAppointmentKey)) {
+            doctorAppointments.put(doctorAppointmentKey, new ArrayList<>());
+        }
+        doctorAppointments.get(doctorAppointmentKey).add(appointmentTime);
+
+        return true;
+    }
+
+    private static class Pair<K, V> {
+        private K first;
+        private V second;
+
+        public Pair(K first, V second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        public K getFirst() {
+            return first;
+        }
+
+        public V getSecond() {
+            return second;
+        }
+    }
+}

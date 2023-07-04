@@ -1,0 +1,29 @@
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDateTime;
+
+public class ReservationTest {
+
+    private ReservationSystem reservationSystem;
+
+    @BeforeEach
+    public void setUp() {
+        // Initialise un système de réservation avec des données de test.
+        // Dans une vraie situation, nous aurions probablement à utiliser des mocks pour cela.
+        reservationSystem = new ReservationSystem();
+    }
+
+    @Test
+    public void testReservationValide() {
+        int patientId = 1;  // Un identifiant de patient valide
+        int doctorId = 1;   // Un identifiant de médecin valide
+        LocalDateTime appointmentDateTime = LocalDateTime.now().plusDays(1);  // Date et heure valides
+
+        // Fait une réservation et vérifie que cela a réussi.
+        assertTrue(reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime));
+    }
+
+    // Autres méthodes de test à compléter...
+}

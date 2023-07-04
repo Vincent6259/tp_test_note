@@ -1,0 +1,22 @@
+public class CarteCreditManager {
+
+    // Vérifie si les informations de la carte de crédit sont valides.
+    public boolean verifyCard(String numCarte, String cvv) {
+        if (numCarte == null || cvv == null) {
+            return false;
+        }
+
+        // Le numéro de carte doit avoir 16 chiffres.
+        if (numCarte.length() != 16) {
+            return false;
+        }
+
+        // Le CVV doit avoir 3 chiffres.
+        if (cvv.length() != 3) {
+            return false;
+        }
+
+        // Vérifie si tous les caractères de numCarte et cvv sont des chiffres.
+        return numCarte.chars().allMatch(Character::isDigit) && cvv.chars().allMatch(Character::isDigit);
+    }
+}

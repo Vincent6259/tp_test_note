@@ -1,0 +1,5 @@
+public class CreditCardManager {
+    public boolean verifyCard(String cardNumber, String cvv) {
+        return cardNumber.length() == 16 && cvv.length() == 3;
+    }
+}

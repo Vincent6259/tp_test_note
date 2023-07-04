@@ -1,0 +1,38 @@
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class PaymentIntegrationTest {
+
+    private PaymentProcessor paymentProcessor;
+    private CarteCreditManager carteCreditManager;
+    private PaymentGateway paymentGateway;
+
+    @BeforeEach
+    public void setup() {
+        carteCreditManager = new CarteCreditManager();
+        paymentGateway = new PaymentGateway();
+        paymentProcessor = new PaymentProcessor(carteCreditManager, paymentGateway);
+    }
+
+    @Test
+    public void testSuccessfulPayment() {
+        // À remplir avec la logique de test pour un paiement réussi.
+    }
+
+    @Test
+    public void testCardVerificationFails() {
+        // À remplir avec la logique de test pour un échec de vérification de la carte.
+    }
+
+    @Test
+    public void testPaymentGatewayFailure() {
+        // À remplir avec la logique de test pour une défaillance du PaymentGateway.
+    }
+
+    @Test
+    public void testNegativeOrZeroPayment() {
+        // À remplir avec la logique de test pour un montant de paiement négatif ou nul.
+    }
+
+}

@@ -1,0 +1,90 @@
+package Exo2;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDateTime;
+
+public class ReservationTest {
+
+    private ReservationSystem reservationSystem;
+
+    @BeforeEach
+    public void setUp() {
+        reservationSystem = new ReservationSystem();
+    }
+
+    @Test
+    public void testReservationValide() {
+        int patientId = 1;  // Un identifiant de patient valide
+        int doctorId = 1;   // Un identifiant de médecin valide
+        LocalDateTime appointmentDateTime = LocalDateTime.now().plusDays(1);  // Date et heure valides
+
+        // Fait une réservation et vérifie que cela a réussi.
+        assertTrue(reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime));
+    }
+    
+    @Test
+    public void testReservationPatientInvalide() {
+        int patientId = 100;  // Un identifiant de patient valide
+        int doctorId = 1; // Un identifiant de médecin invalide
+        LocalDateTime appointmentDateTime = LocalDateTime.now().plusDays(1);  // Date et heure valides
+
+        // Tente de faire une réservation avec un patient non valide et vérifie que cela échoue.
+        assertFalse(reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime));
+    }
+
+
+    @Test
+    public void testReservationMedecinInvalide() {
+        int patientId = 1;  // Un identifiant de patient valide
+        int doctorId = 100; // Un identifiant de médecin invalide
+        LocalDateTime appointmentDateTime = LocalDateTime.now().plusDays(1);  // Date et heure valides
+
+        // Tente de faire une réservation avec un médecin non valide et vérifie que cela échoue.
+        assertFalse(reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime));
+    }
+
+    @Test
+    public void testReservationDateIndisponible() {
+        int patientId = 1;  // Un identifiant de patient valide
+        int doctorId = 1;   // Un identifiant de médecin valide
+        LocalDateTime appointmentDateTime = LocalDateTime.now().plusDays(1);  // Date et heure valides
+
+        // Fait une réservation.
+        reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime);
+
+        // Tente de faire une autre réservation au même moment et vérifie que cela échoue.
+        assertFalse(reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime));
+    }
+
+    @Test
+    public void testReservationPatientOccupe() {
+        int patientId = 1;  // Un identifiant de patient valide
+        int doctorId = 1;   // Un identifiant de médecin valide
+        LocalDateTime appointmentDateTime = LocalDateTime.now().plusDays(1);  // Date et heure valides
+
+        // Fait une première réservation pour le même médecin et patient à la même date et heure.
+        reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime);
+
+        // Tente de faire une autre réservation au même moment et vérifie que cela échoue.
+        assertFalse(reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime));
+    }
+
+    @Test
+    public void testReservationMedecinOccupe() {
+        int patientId = 1;  // Un identifiant de patient valide
+        int doctorId = 1;   // Un identifiant de médecin valide
+        LocalDateTime appointmentDateTime = LocalDateTime.now().plusDays(1);  // Date et heure valides
+
+        // Fait 4 réservations pour le même médecin à la même date.
+        reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime);
+        reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime);
+        reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime);
+        reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime);
+
+        // Tente de faire une cinquième réservation au même moment et vérifie que cela échoue.
+        assertFalse(reservationSystem.makeReservation(patientId, doctorId, appointmentDateTime));
+    }
+}

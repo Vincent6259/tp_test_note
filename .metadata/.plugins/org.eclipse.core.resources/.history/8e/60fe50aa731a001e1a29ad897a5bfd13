@@ -1,0 +1,85 @@
+package Exo2;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+
+public class ReservationSystem {
+    private Map<Integer, String> patients = new HashMap<>();
+    private Map<Integer, String> doctors = new HashMap<>();
+    private Map<Pair<Integer, LocalDate>, List<LocalTime>> doctorAppointments = new HashMap<>();
+
+    public ReservationSystem() {
+        // Initialise des données de test.
+        doctors.put(1, "Dr. Smith");
+        doctors.put(2, "Dr. Johnson");
+        doctors.put(3, "Dr. Williams");
+
+        patients.put(1, "Patient A");
+        patients.put(2, "Patient B");
+        patients.put(3, "Patient C");
+
+        // Initialise les plages horaires disponibles pour chaque médecin.
+        for (int doctorId : doctors.keySet()) {
+            doctorAppointments.put(new Pair<>(doctorId, LocalDate.now()), new ArrayList<>());
+        }
+    }
+
+    public boolean makeReservation(int patientId, int doctorId, LocalDateTime dateTime) {
+        // Vérifie si le patient et le médecin sont valides.
+        if (!patients.containsKey(patientId) || !doctors.containsKey(doctorId)) {
+            return false;
+        }
+
+        LocalDate appointmentDate = dateTime.toLocalDate();
+        LocalTime appointmentTime = dateTime.toLocalTime();
+
+        // Vérifie si le médecin est disponible à la date et l'heure demandées.
+        Pair<Integer, LocalDate> doctorAppointmentKey = new Pair<>(doctorId, appointmentDate);
+        List<LocalTime> doctorAppointmentsForDate = doctorAppointments.get(doctorAppointmentKey);
+        if (doctorAppointmentsForDate != null && doctorAppointmentsForDate.size() >= 4) {
+            return false;  // Le médecin a déjà 4 rendez-vous ce jour-là.
+        }
+
+        // Vérifie si le patient a déjà un rendez-vous à la même date et heure.
+        for (Map.Entry<Pair<Integer, LocalDate>, List<LocalTime>> entry : doctorAppointments.entrySet()) {
+            Pair<Integer, LocalDate> key = entry.getKey();
+            if (key.first == doctorId && key.second.isEqual(appointmentDate)) {
+                List<LocalTime> appointments = entry.getValue();
+                if (appointments.contains(appointmentTime)) {
+                    return false;  // Le patient a déjà un rendez-vous à la même date et heure.
+                }
+            }
+        }
+
+        // Ajoute la réservation.
+        if (!doctorAppointments.containsKey(doctorAppointmentKey)) {
+            doctorAppointments.put(doctorAppointmentKey, new ArrayList<>());
+        }
+        doctorAppointments.get(doctorAppointmentKey).add(appointmentTime);
+
+        return true;  // La réservation a été ajoutée avec succès.
+    }
+
+    private static class Pair<K, V> {
+        private K first;
+        private V second;
+
+        public Pair(K first, V second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        // Getters, setters, hashCode, equals...
+        public K getFirst() {
+            return first;
+        }
+
+        public V getSecond() {
+            return second;
+        }
+
+        // hashCode, equals...
+    }
+}
